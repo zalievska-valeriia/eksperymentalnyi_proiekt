@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Розподіл витрат за видами об'єктів на третій рік експерименту</title>
+<title>Розподіл сум контрактів за видами об'єктів на третій рік експерименту</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -189,7 +189,7 @@
 </head>
 <body>
 <div class="card">
-  <h1>Розподіл витрат за видами об'єктів на третій рік експерименту</h1>
+  <h1>Розподіл сум контрактів за видами об'єктів на третій рік експерименту</h1>
 
   <div class="tabs" id="tabs"></div>
 
@@ -267,7 +267,7 @@ tabsEl.innerHTML = places.map((p, i) =>
 
 function render(idx){
   const p = places[idx];
-  subtitle.textContent = `Розподіл фактичних витрат за видами об'єктів — ${p.name}`;
+  subtitle.textContent = `Розподіл сум контрактів за видами об'єктів — ${p.name}`;
 
   let cumulative = 0;
   arcsG.innerHTML = categories.map(cat => {
