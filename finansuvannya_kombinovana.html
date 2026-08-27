@@ -300,10 +300,6 @@
   </div>
 
   <p class="subtitle" id="subtitle"></p>
-  <div class="total-callout" id="totalCallout" style="display:none">
-    <span>Загальна очікувана вартість проєкту:</span>
-    <span class="val">12,6 млрд грн</span>
-  </div>
 
   <div class="legend" id="legend"></div>
 
@@ -329,7 +325,7 @@ const citiesData = {
   items: [
     {name:"Посад-Покровське", sub:"Херсонщина", bars:[
       {v:4544.99, c:"yellow", label:"Очікувана вартість"},
-      {v:2262.83, c:"gold", label:"Виділено", pctLabel:"виділеного"},
+      {v:2263.83, c:"gold", label:"Виділено", pctLabel:"виділеного"},
       {v:1101.89, c:"orange", label:"Фактично витрачено", pctOf:1},
     ]},
     {name:"Ягідне", sub:"Чернігівщина", bars:[
@@ -340,7 +336,7 @@ const citiesData = {
     {name:"Бородянка", sub:"Київщина", bars:[
       {v:6249.05, c:"yellow", label:"Очікувана вартість"},
       {v:5122.50, c:"gold", label:"Виділено", pctLabel:"виділеного"},
-      {v:2272.63, c:"orange", label:"Фактично витрачено", pctOf:1},
+      {v:2342.70, c:"orange", label:"Фактично витрачено", pctOf:1},
     ]},
     {name:"Тростянець", sub:"Сумщина", bars:[
       {v:1003.03, c:"yellow", label:"Очікувана вартість"},
@@ -358,31 +354,31 @@ const citiesData = {
 
 const yearsData = {
   legend: [
-    {label:"Погоджене фінансування", key:"yellow"},
+    {label:"Очікувана вартість відновлення", key:"yellow"},
     {label:"Виділене фінансування", key:"gold"},
-    {label:"Фактичні витрати", key:"orange"},
+    {label:"Фактично витрачено", key:"orange"},
   ],
   subtitle: "Динаміка фінансування експериментального проєкту за роками, млрд грн",
   items: [
     {name:"2023", sub:"", bars:[
-      {v:3.35, c:"yellow", label:"Погоджене фінансування"},
+      {v:9.98, c:"yellow", label:"Очікувана вартість"},
       {v:3.35, c:"gold", label:"Виділено", pctLabel:"виділеного"},
-      {v:0.56, c:"orange", label:"Фактичні витрати", pctOf:1},
+      {v:0.56, c:"orange", label:"Фактично витрачено", pctOf:1},
     ]},
     {name:"2024", sub:"", bars:[
-      {v:2.23, c:"yellow", label:"Погоджене фінансування"},
+      {v:10.58, c:"yellow", label:"Очікувана вартість"},
       {v:2.23, c:"gold", label:"Виділено", pctLabel:"виділеного"},
-      {v:0.50, c:"orange", label:"Фактичні витрати", pctOf:1},
+      {v:0.50, c:"orange", label:"Фактично витрачено", pctOf:1},
     ]},
     {name:"2025", sub:"", bars:[
-      {v:3.49, c:"yellow", label:"Погоджене фінансування"},
+      {v:12.60, c:"yellow", label:"Очікувана вартість"},
       {v:3.49, c:"gold", label:"Виділено", pctLabel:"виділеного"},
-      {v:2.93, c:"orange", label:"Фактичні витрати", pctOf:1},
+      {v:2.93, c:"orange", label:"Фактично витрачено", pctOf:1},
     ]},
     {name:"2026", sub:"", bars:[
-      {v:1.94, c:"yellow", label:"Погоджене фінансування"},
-      {v:0, c:"gold", label:"Виділено", pctLabel:"виділеного"},
-      {v:0, c:"orange", label:"Фактичні витрати", pctOf:1},
+      {v:6.87, c:"yellow", label:"Очікувана вартість"},
+      {v:1.94, c:"gold", label:"Виділено", pctLabel:"виділеного"},
+      {v:0, c:"orange", label:"Фактично витрачено", pctOf:1, unknown:true},
     ]},
   ],
   unitMode: "billions", // values already given in billions
@@ -417,7 +413,6 @@ const chartEl = document.getElementById('chart');
 const labelsEl = document.getElementById('labels');
 const legendEl = document.getElementById('legend');
 const subtitleEl = document.getElementById('subtitle');
-const totalCalloutEl = document.getElementById('totalCallout');
 
 function render(view){
   const data = view === 'years' ? yearsData : citiesData;
@@ -425,7 +420,6 @@ function render(view){
   const fmtFull = data.unitMode === 'billions' ? fmtFullBillions : fmtFullAuto;
 
   subtitleEl.textContent = data.subtitle;
-  totalCalloutEl.style.display = view === 'years' ? 'flex' : 'none';
 
   legendEl.innerHTML = data.legend.map(l =>
     `<div class="legend-item"><span class="swatch" style="background:var(--${l.key})"></span>${l.label}</div>`
@@ -448,6 +442,9 @@ function render(view){
     group.className = 'group';
 
     const tooltipRows = item.bars.map(b => {
+      if (b.unknown){
+        return `<div class="tooltip-row"><span>${b.label}</span><b>наразі невідомо</b></div>`;
+      }
       if (b.pctOf !== undefined && item.bars[b.pctOf]){
         const baseBar = item.bars[b.pctOf];
         const baseWord = baseBar.pctLabel || baseBar.label.toLowerCase();
@@ -458,9 +455,10 @@ function render(view){
 
     const barsHtml = item.bars.map(b => {
       const h = scale(b.v);
+      const valueLabel = b.unknown ? 'н/д' : fmtShort(b.v);
       return `
       <div class="bar-col">
-        <div class="bar-value" style="bottom:calc(${h}% + 6px)">${fmtShort(b.v)}</div>
+        <div class="bar-value" style="bottom:calc(${h}% + 6px)">${valueLabel}</div>
         <div class="bar" style="background:var(--${b.c});height:${h}%"></div>
       </div>
     `;
